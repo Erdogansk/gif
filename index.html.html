@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F&F Film ve Fotoğrafçılık Kulübü</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#E50914',
+                            darkRed: '#B20710',
+                            dark: '#0A0A0C',
+                            card: '#141418',
+                            border: '#26262C'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0A0C;
+            color: #E2E8F0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(20, 20, 24, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0A0A0C;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #26262C;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #E50914;
+        }
+    </style>
+</head>
+<body class="custom-scrollbar min-h-screen flex flex-col justify-between selection:bg-brand-red selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-40 w-full glass-panel border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3">
+                    <div id="site-logo-container" class="flex items-center justify-center w-12 h-12 bg-black rounded-lg border border-brand-border p-1 overflow-hidden">
+                        <!-- Custom SVG dynamic or loaded Logo -->
+                        <div id="logo-render" class="flex items-center justify-center font-bold text-lg text-white">
+                            <span class="text-brand-red">F</span>&<span class="text-brand-red">F</span>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="#" id="site-title-display" class="text-xl font-extrabold tracking-wider text-white uppercase block leading-none">
+                            FILM VE FOTOĞRAFÇILIK
+                        </a>
+                        <span id="site-subtitle-display" class="text-xs text-gray-400 font-medium tracking-widest uppercase">
+                            KULÜBÜ
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#hero" class="text-sm font-semibold hover:text-brand-red transition">Ana Sayfa</a>
+                    <a href="#etkinlikler" class="text-sm font-semibold hover:text-brand-red transition">Etkinlikler</a>
+                    <a href="#duyurular" class="text-sm font-semibold hover:text-brand-red transition">Duyurular</a>
+                    <a href="#galeri" class="text-sm font-semibold hover:text-brand-red transition">Galeri</a>
+                    <a href="#hakkimizda" class="text-sm font-semibold hover:text-brand-red transition">Hakkımızda</a>
+                    <a href="#yorumlar" class="text-sm font-semibold hover:text-brand-red transition">Yorumlar</a>
+                </div>
+
+                <!-- Social Links & Admin Button -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a id="nav-instagram" href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
+                       class="w-9 h-9 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-300 hover:text-white hover:bg-gradient-to-tr hover:from-yellow-500 hover:via-red-500 hover:to-purple-600 transition">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a id="nav-tiktok" href="https://tiktok.com" target="_blank" rel="noopener noreferrer" 
+                       class="w-9 h-9 rounded-full bg-brand-card border border-brand-border flex items-center justify-center text-gray-300 hover:text-white hover:bg-black transition">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    
+                    <button id="admin-auth-btn" onclick="toggleAdminModal()" 
+                            class="ml-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg border border-brand-red text-brand-red hover:bg-brand-red hover:text-white transition flex items-center gap-2">
+                        <i class="fas fa-lock"></i>
+                        <span id="admin-btn-text">Admin Girişi</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button id="admin-auth-btn-mobile" onclick="toggleAdminModal()" class="p-2 text-brand-red">
+                        <i class="fas fa-lock"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-brand-border bg-brand-dark px-4 pt-3 pb-6 space-y-3">
+            <a href="#hero" onclick="toggleMobileMenu()" class="block text-sm font-medium hover:text-brand-red">Ana Sayfa</a>
+            <a href="#etkinlikler" onclick="toggleMobileMenu()" class="block text-sm font-medium hover:text-brand-red">Etkinlikler</a>
+            <a href="#duyurular" onclick="toggleMobileMenu()" class="block text-sm font-medium hover:text-brand-red">Duyurular</a>
+            <a href="#galeri" onclick="toggleMobileMenu()" class="block text-sm font-medium hover:text-brand-red">Galeri</a>
+            <a href="#hakkimizda" onclick="toggleMobileMenu()" class="block text-sm font-medium hover:text-brand-red">Hakkımızda</a>
+            <a href="#yorumlar" onclick="toggleMobileMenu()" class="block text-sm font-medium hover:text-brand-red">Yorumlar</a>
+            <div class="pt-2 flex items-center space-x-4 border-t border-brand-border">
+                <a id="mobile-nav-instagram" href="https://instagram.com" target="_blank" class="text-gray-300 hover:text-brand-red"><i class="fab fa-instagram text-lg"></i> Instagram</a>
+                <a id="mobile-nav-tiktok" href="https://tiktok.com" target="_blank" class="text-gray-300 hover:text-brand-red"><i class="fab fa-tiktok text-lg"></i> TikTok</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ADMIN PANEL BANNER (Visible only when logged in) -->
+    <div id="admin-bar" class="hidden bg-gradient-to-r from-red-900 via-brand-red to-red-900 text-white px-4 py-2.5 shadow-lg border-b border-red-500/30 sticky top-20 z-30">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm font-semibold">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
+                <span>YÖNETİCİ MODU AKTİF — Sitede Değişiklik Yapabilirsiniz</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="openAdminSettingsModal()" class="px-3 py-1 bg-black/40 hover:bg-black/60 rounded border border-white/20 transition flex items-center gap-1.5">
+                    <i class="fas fa-sliders"></i> Site Ayarları
+                </button>
+                <button onclick="logoutAdmin()" class="px-3 py-1 bg-white/20 hover:bg-white/30 rounded transition text-white">
+                    Çıkış Yap
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow">
+        
+        <!-- HERO SECTION -->
+        <section id="hero" class="relative py-24 md:py-36 overflow-hidden flex items-center justify-center border-b border-brand-border">
+            <div class="absolute inset-0 z-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/80 via-brand-dark/95 to-brand-dark z-0"></div>
+            
+            <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-bold tracking-widest uppercase mb-6">
+                    Sinematik Anları Yakalıyoruz
+                </span>
+                <h1 id="hero-title-display" class="text-4xl md:text-6xl font-black tracking-tight text-white mb-6 uppercase">
+                    Vizörden Dünyaya Bakış
+                </h1>
+                <p id="hero-desc-display" class="text-base md:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8">
+                    Film ve Fotoğrafçılık Kulübü olarak senaryodan kurguya, sokak fotoğrafçılığından stüdyo çekimlerine kadar yaratıcı süreçleri birlikte tecrübe ediyoruz.
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="#etkinlikler" class="px-6 py-3 rounded-lg bg-brand-red hover:bg-brand-darkRed text-white font-bold text-sm transition shadow-lg shadow-brand-red/20">
+                        Etkinliklere Göz At
+                    </a>
+                    <a href="#yorumlar" class="px-6 py-3 rounded-lg bg-brand-card border border-brand-border hover:bg-gray-800 text-gray-200 font-bold text-sm transition">
+                        Bize Katıl & Yorum Yap
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ETKİNLİKLER (EVENTS) SECTION -->
+        <section id="etkinlikler" class="py-20 border-b border-brand-border max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-end justify-between mb-12 gap-4">
+                <div>
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-brand-red mb-2">Aktivitelerimiz</h2>
+                    <h3 class="text-3xl font-extrabold text-white">Gelecek & Geçmiş Etkinlikler</h3>
+                </div>
+                <!-- Admin Add Event Button -->
+                <button id="add-event-btn" onclick="openEventModal()" class="hidden px-4 py-2 bg-brand-red text-white text-xs font-bold rounded-lg hover:bg-brand-darkRed transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Yeni Etkinlik Ekle
+                </button>
+            </div>
+
+            <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Events rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- DUYURULAR (ANNOUNCEMENTS) SECTION -->
+        <section id="duyurular" class="py-20 border-b border-brand-border bg-brand-card/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-wrap items-end justify-between mb-12 gap-4">
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-brand-red mb-2">Güncel Bilgilendirmeler</h2>
+                        <h3 class="text-3xl font-extrabold text-white">Kulüp Duyuruları</h3>
+                    </div>
+                    <!-- Admin Add Announcement Button -->
+                    <button id="add-announcement-btn" onclick="openAnnouncementModal()" class="hidden px-4 py-2 bg-brand-red text-white text-xs font-bold rounded-lg hover:bg-brand-darkRed transition flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Yeni Duyuru Ekle
+                    </button>
+                </div>
+
+                <div id="announcements-container" class="space-y-4">
+                    <!-- Announcements rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- GALERİ / FOTOĞRAFLAR -->
+        <section id="galeri" class="py-20 border-b border-brand-border max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-end justify-between mb-12 gap-4">
+                <div>
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-brand-red mb-2">Karelerimiz</h2>
+                    <h3 class="text-3xl font-extrabold text-white">Fotoğraf Galerisi</h3>
+                </div>
+                <!-- Admin Add Photo Button -->
+                <button id="add-photo-btn" onclick="openPhotoModal()" class="hidden px-4 py-2 bg-brand-red text-white text-xs font-bold rounded-lg hover:bg-brand-darkRed transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Fotoğraf Ekle
+                </button>
+            </div>
+
+            <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Gallery items rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- HAKKIMIZDA SECTION -->
+        <section id="hakkimizda" class="py-20 border-b border-brand-border bg-brand-card/20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <div class="md:col-span-5 relative">
+                        <div class="aspect-square rounded-2xl overflow-hidden border border-brand-border shadow-2xl relative">
+                            <img id="about-image-display" src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop" alt="Hakkımızda" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-4 -right-4 bg-brand-red text-white p-4 rounded-xl shadow-lg text-center">
+                            <span class="block text-2xl font-black" id="about-stat-1">100+</span>
+                            <span class="text-xs font-semibold uppercase">Aktif Üye</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-7">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-xs font-bold uppercase tracking-widest text-brand-red">Biz Kimiz?</h2>
+                            <button id="edit-about-btn" onclick="openAboutEditModal()" class="hidden px-3 py-1 bg-gray-800 hover:bg-gray-700 text-xs text-white rounded border border-gray-600">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </button>
+                        </div>
+                        <h3 id="about-heading-display" class="text-3xl font-extrabold text-white mb-6">
+                            Sinema ve Fotoğraf Tutkunlarının Buluşma Noktası
+                        </h3>
+                        <p id="about-text-display" class="text-gray-300 leading-relaxed mb-6 whitespace-pre-line">
+                            Film ve Fotoğrafçılık Kulübü (F&F), görsel sanatlara ilgi duyan tüm öğrencileri ve sanatseverleri bir araya getirmek amacıyla kurulmuştur. 
+                            
+                            Amacımız; stüdyo ortamında teknik eğitimler düzenlemek, film gösterimleri ile sinematik analizler yapmak, düzenli fotoğraf gezileri ile anı ölümsüzleştirmek ve üyelerimizin kendi kısa filmlerini çekmelerine destek olmaktır.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-brand-border">
+                            <div>
+                                <h4 class="text-white font-bold text-sm mb-1"><i class="fas fa-camera text-brand-red mr-2"></i>Atölyeler</h4>
+                                <p class="text-xs text-gray-400">Işık, kompozisyon ve kurgu eğitimleri</p>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm mb-1"><i class="fas fa-film text-brand-red mr-2"></i>Gösterimler</h4>
+                                <p class="text-xs text-gray-400">Kült filmler ve yönetmen söyleşileri</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- YORUMLAR (GUESTBOOK / COMMENTS) -->
+        <section id="yorumlar" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-brand-red mb-2">Ziyaretçi Defteri</h2>
+                    <h3 class="text-3xl font-extrabold text-white mb-3">Düşüncelerinizi Paylaşın</h3>
+                    <p class="text-sm text-gray-400">Üyelik veya hesap açmanıza gerek kalmadan direkt yorum yapabilirsiniz.</p>
+                </div>
+
+                <!-- Add Comment Form -->
+                <div class="glass-panel p-6 rounded-2xl border border-brand-border mb-12">
+                    <form id="comment-form" onsubmit="handleAddComment(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Adınız / Rumuzunuz *</label>
+                                <input type="text" id="comment-author" required placeholder="Örn: Ahmet Yılmaz" 
+                                       class="w-full px-4 py-2.5 rounded-lg bg-brand-card border border-brand-border text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Unvan / İlgi Alanı (Opsiyonel)</label>
+                                <input type="text" id="comment-role" placeholder="Örn: Amatör Fotoğrafçı, Öğrenci..." 
+                                       class="w-full px-4 py-2.5 rounded-lg bg-brand-card border border-brand-border text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Yorumunuz *</label>
+                            <textarea id="comment-text" required rows="3" placeholder="Kulübümüz veya etkinliklerimiz hakkında ne düşünüyorsunuz?" 
+                                      class="w-full px-4 py-2.5 rounded-lg bg-brand-card border border-brand-border text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition"></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 bg-brand-red hover:bg-brand-darkRed text-white font-bold text-sm rounded-lg transition flex items-center gap-2">
+                                <i class="fas fa-paper-plane"></i> Yorumu Gönder
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Comments List -->
+                <div id="comments-list" class="space-y-4">
+                    <!-- Dynamic comments list -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-black border-t border-brand-border py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <span class="text-lg font-black text-white uppercase tracking-wider">F&F FILM VE FOTOĞRAFÇILIK KULÜBÜ</span>
+                <p class="text-xs text-gray-500 mt-1">Görsel Sanatlar ve Sinema Topluluğu &copy; 2026. Tüm hakları saklıdır.</p>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <a id="footer-instagram" href="https://instagram.com" target="_blank" class="text-gray-400 hover:text-brand-red transition text-xl">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a id="footer-tiktok" href="https://tiktok.com" target="_blank" class="text-gray-400 hover:text-brand-red transition text-xl">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS SECTION -->
+
+    <!-- 1. ADMIN LOGIN MODAL -->
+    <div id="admin-login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-brand-border relative">
+            <button onclick="toggleAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-brand-red/20 border border-brand-red text-brand-red rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-user-shield text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Yönetici Girişi</h3>
+                <p class="text-xs text-gray-400 mt-1">Sitenizi düzenlemek için şifrenizi girin</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Admin Şifresi</label>
+                    <input type="password" id="admin-password-input" required placeholder="••••••••" 
+                           class="w-full px-4 py-2.5 rounded-lg bg-brand-card border border-brand-border text-white focus:outline-none focus:border-brand-red transition">
+                    <span class="text-[10px] text-gray-500 mt-1 block">Varsayılan Şifre: <code class="text-brand-red">admin123</code></span>
+                </div>
+                <button type="submit" class="w-full py-3 bg-brand-red hover:bg-brand-darkRed text-white font-bold rounded-lg transition">
+                    Giriş Yap
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. SITE GENERAL SETTINGS MODAL (ADMIN) -->
+    <div id="admin-settings-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-xl p-6 rounded-2xl border border-brand-border relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeAdminSettingsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-4 border-b border-brand-border pb-3"><i class="fas fa-sliders text-brand-red mr-2"></i> Genel Site Ayarları</h3>
+            
+            <form onsubmit="saveSiteSettings(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Site Başlığı</label>
+                        <input type="text" id="setting-title" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Alt Başlık / Kulüp Adı</label>
+                        <input type="text" id="setting-subtitle" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Hero Alanı Başlığı</label>
+                    <input type="text" id="setting-hero-title" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Hero Açıklama Metni</label>
+                    <textarea id="setting-hero-desc" rows="2" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Instagram Linki</label>
+                        <input type="url" id="setting-instagram" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">TikTok Linki</label>
+                        <input type="url" id="setting-tiktok" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Logo Görseli URL (Opsiyonel - Boş bırakılırsa varsayılan F&F logosu görünür)</label>
+                    <input type="url" id="setting-logo-url" placeholder="https://..." class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Admin Şifresini Değiştir</label>
+                    <input type="text" id="setting-admin-pass" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm" placeholder="Yeni şifre belirleyin">
+                </div>
+
+                <div class="pt-4 border-t border-brand-border flex justify-end gap-3">
+                    <button type="button" onclick="closeAdminSettingsModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded text-sm hover:bg-gray-700">İptal</button>
+                    <button type="submit" class="px-6 py-2 bg-brand-red text-white font-bold rounded text-sm hover:bg-brand-darkRed">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. EVENT MODAL (ADD / EDIT) -->
+    <div id="event-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-brand-border relative">
+            <button onclick="closeEventModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <h3 id="event-modal-title" class="text-xl font-bold text-white mb-4">Etkinlik Ekle</h3>
+            
+            <form onsubmit="handleSaveEvent(event)" class="space-y-4">
+                <input type="hidden" id="event-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Etkinlik Adı</label>
+                    <input type="text" id="event-title" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Tarih & Saat</label>
+                        <input type="text" id="event-date" placeholder="Örn: 25 Ekim 2026 - 15:00" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Konum</label>
+                        <input type="text" id="event-location" placeholder="Örn: Amfi 2 / Kadıköy" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Görsel URL</label>
+                    <input type="url" id="event-image" placeholder="https://images.unsplash.com/..." required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Açıklama</label>
+                    <textarea id="event-desc" rows="3" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm"></textarea>
+                </div>
+
+                <div class="pt-4 border-t border-brand-border flex justify-end gap-3">
+                    <button type="button" onclick="closeEventModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded text-sm">İptal</button>
+                    <button type="submit" class="px-6 py-2 bg-brand-red text-white font-bold rounded text-sm hover:bg-brand-darkRed">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. ANNOUNCEMENT MODAL -->
+    <div id="announcement-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-brand-border relative">
+            <button onclick="closeAnnouncementModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-4">Duyuru Ekle</h3>
+            
+            <form onsubmit="handleSaveAnnouncement(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Duyuru Başlığı</label>
+                    <input type="text" id="ann-title" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Duyuru İçeriği</label>
+                    <textarea id="ann-content" rows="4" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Rozet / Etiket (Örn: ÖNEMLİ, YENİ, KAYIT)</label>
+                    <input type="text" id="ann-badge" placeholder="ÖNEMLİ" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+
+                <div class="pt-4 border-t border-brand-border flex justify-end gap-3">
+                    <button type="button" onclick="closeAnnouncementModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded text-sm">İptal</button>
+                    <button type="submit" class="px-6 py-2 bg-brand-red text-white font-bold rounded text-sm hover:bg-brand-darkRed">Yayınla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. PHOTO ADD MODAL -->
+    <div id="photo-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-brand-border relative">
+            <button onclick="closePhotoModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-4">Galeriye Fotoğraf Ekle</h3>
+            
+            <form onsubmit="handleSavePhoto(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fotoğraf Başlığı / Başlık</label>
+                    <input type="text" id="photo-title" required placeholder="Örn: Kadıköy Sokak Çekimi" class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Fotoğraf URL</label>
+                    <input type="url" id="photo-url" required placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+
+                <div class="pt-4 border-t border-brand-border flex justify-end gap-3">
+                    <button type="button" onclick="closePhotoModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded text-sm">İptal</button>
+                    <button type="submit" class="px-6 py-2 bg-brand-red text-white font-bold rounded text-sm hover:bg-brand-darkRed">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. EDIT ABOUT MODAL -->
+    <div id="about-edit-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-brand-border relative">
+            <button onclick="closeAboutEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-4">Hakkımızda Metnini Düzenle</h3>
+            
+            <form onsubmit="handleSaveAbout(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Başlık</label>
+                    <input type="text" id="about-edit-heading" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Görsel URL</label>
+                    <input type="url" id="about-edit-image" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">İçerik Metni</label>
+                    <textarea id="about-edit-text" rows="5" required class="w-full px-3 py-2 rounded bg-brand-card border border-brand-border text-white text-sm"></textarea>
+                </div>
+
+                <div class="pt-4 border-t border-brand-border flex justify-end gap-3">
+                    <button type="button" onclick="closeAboutEditModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded text-sm">İptal</button>
+                    <button type="submit" class="px-6 py-2 bg-brand-red text-white font-bold rounded text-sm hover:bg-brand-darkRed">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- APPLICATION JAVASCRIPT LOGIC -->
+    <script>
+        // --- INITIAL DATA & STORAGE MANAGEMENT ---
+
+        const DEFAULT_DATA = {
+            siteSettings: {
+                title: "FILM VE FOTOĞRAFÇILIK",
+                subtitle: "KULÜBÜ",
+                heroTitle: "Vizörden Dünyaya Bakış",
+                heroDesc: "Film ve Fotoğrafçılık Kulübü olarak senaryodan kurguya, sokak fotoğrafçılığından stüdyo çekimlerine kadar yaratıcı süreçleri birlikte tecrübe ediyoruz.",
+                instagram: "https://instagram.com",
+                tiktok: "https://tiktok.com",
+                logoUrl: "", // Optional image logo URL
+                adminPass: "admin123"
+            },
+            about: {
+                heading: "Sinema ve Fotoğraf Tutkunlarının Buluşma Noktası",
+                image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop",
+                text: "Film ve Fotoğrafçılık Kulübü (F&F), görsel sanatlara ilgi duyan tüm öğrencileri ve sanatseverleri bir araya getirmek amacıyla kurulmuştur.\n\nAmacımız; stüdyo ortamında teknik eğitimler düzenlemek, film gösterimleri ile sinematik analizler yapmak, düzenli fotoğraf gezileri ile anı ölümsüzleştirmek ve üyelerimizin kendi kısa filmlerini çekmelerine destek olmaktır."
+            },
+            events: [
+                {
+                    id: 'ev-1',
+                    title: 'Sonbahar Sokak Fotoğrafçılığı Yürüyüşü',
+                    date: '28 Ekim 2026 - 14:00',
+                    location: 'Karaköy & Galata',
+                    image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?q=80&w=800&auto=format&fit=crop',
+                    desc: 'Tarihi sokaklarda ışık ve gölge oyunlarını yakalayacağımız, sokak fotoğrafçılığı tekniklerini sahada uygulayacağımız gezimize davetlisiniz.'
+                },
+                {
+                    id: 'ev-2',
+                    title: 'Temel Kadraj ve Işık Atölyesi',
+                    date: '02 Kasım 2026 - 16:30',
+                    location: 'Kulüp Stüdyosu (B Blok -1)',
+                    image: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=800&auto=format&fit=crop',
+                    desc: 'Manuel çekim modları, ISO-Enstantane-Diyafram dengesi ve üç noktalı stüdyo aydınlatması pratikleri.'
+                },
+                {
+                    id: 'ev-3',
+                    title: 'Kısa Film Analizi: Sinematografi Toplantısı',
+                    date: '10 Kasım 2026 - 18:00',
+                    location: 'Sinema Salonu A',
+                    image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=800&auto=format&fit=crop',
+                    desc: 'Ödüllü kısa filmlerin kamera açıları, renk paletleri ve anlatı yapıları üzerine etkileşimli inceleme.'
+                }
+            ],
+            announcements: [
+                {
+                    id: 'ann-1',
+                    title: 'Yeni Dönem Üye Kayıtları Başladı!',
+                    badge: 'DUYURU',
+                    date: '20 Ekim 2026',
+                    content: 'Görsel sanatlar dünyasına adım atmak isteyen tüm arkadaşlarımızı kulübümüze bekliyoruz. Etkinliklerimiz ve atölyelerimiz herkese açıktır.'
+                },
+                {
+                    id: 'ann-2',
+                    title: 'Kısa Film Senaryo Yarışması',
+                    badge: 'YARIŞMA',
+                    date: '18 Ekim 2026',
+                    content: 'Bu yıl düzenleyeceğimiz geleneksel kısa film yarışması için senaryo teslimleri açılmıştır. Son başvuru tarihi 15 Kasım.'
+                }
+            ],
+            photos: [
+                { id: 'ph-1', title: 'Işık ve Gölge', url: 'https://images.unsplash.com/photo-1500051638674-ff996a0ec29e?q=80&w=800&auto=format&fit=crop' },
+                { id: 'ph-2', title: 'Portre Çalışması', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop' },
+                { id: 'ph-3', title: 'Sinematik Gece', url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop' },
+                { id: 'ph-4', title: 'Analog Dokunuş', url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?q=80&w=800&auto=format&fit=crop' }
+            ],
+            comments: [
+                {
+                    id: 'cm-1',
+                    author: 'Merve Kaya',
+                    role: 'Sinema Öğrencisi',
+                    text: 'Geçen haftaki stüdyo çekim atölyesi harikaydı! Işık kurulumu konusunda çok şey öğrendim, teşekkürler F&F ekibi.',
+                    date: '19 Ekim 2026'
+                },
+                {
+                    id: 'cm-2',
+                    author: 'Caner Öztürk',
+                    role: 'Fotoğraf Sever',
+                    text: 'Sokak yürüyüşü etkinliğine katılmıştım. Ortam çok samimi ve öğreticiydi. Bir sonrakini sabırsızlıkla bekliyorum.',
+                    date: '15 Ekim 2026'
+                }
+            ]
+        };
+
+        // State Holder
+        let appState = {
+            isAdmin: false,
+            data: DEFAULT_DATA
+        };
+
+        // Load Data from LocalStorage
+        function loadState() {
+            try {
+                const stored = localStorage.getItem('ff_club_data');
+                if (stored) {
+                    appState.data = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error("LocalStorage yüklenirken hata oluştu:", e);
+            }
+        }
+
+        // Save State to LocalStorage
+        function saveState() {
+            try {
+                localStorage.setItem('ff_club_data', JSON.stringify(appState.data));
+            } catch (e) {
+                console.error("LocalStorage kaydedilirken hata oluştu:", e);
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        function renderAll() {
+            renderSiteSettings();
+            renderEvents();
+            renderAnnouncements();
+            renderGallery();
+            renderAbout();
+            renderComments();
+            updateAdminUI();
+        }
+
+        function renderSiteSettings() {
+            const s = appState.data.siteSettings;
+            
+            // Navbar Titles
+            document.getElementById('site-title-display').innerText = s.title;
+            document.getElementById('site-subtitle-display').innerText = s.subtitle;
+
+            // Hero
+            document.getElementById('hero-title-display').innerText = s.heroTitle;
+            document.getElementById('hero-desc-display').innerText = s.heroDesc;
+
+            // Social links
+            document.getElementById('nav-instagram').href = s.instagram || '#';
+            document.getElementById('nav-tiktok').href = s.tiktok || '#';
+            document.getElementById('mobile-nav-instagram').href = s.instagram || '#';
+            document.getElementById('mobile-nav-tiktok').href = s.tiktok || '#';
+            document.getElementById('footer-instagram').href = s.instagram || '#';
+            document.getElementById('footer-tiktok').href = s.tiktok || '#';
+
+            // Logo render
+            const logoContainer = document.getElementById('logo-render');
+            if (s.logoUrl && s.logoUrl.trim() !== "") {
+                logoContainer.innerHTML = `<img src="${s.logoUrl}" alt="Logo" class="w-full h-full object-contain">`;
+            } else {
+                logoContainer.innerHTML = `<span class="text-brand-red">F</span>&<span class="text-brand-red">F</span>`;
+            }
+        }
+
+        function renderEvents() {
+            const grid = document.getElementById('events-grid');
+            grid.innerHTML = '';
+
+            appState.data.events.forEach(ev => {
+                const card = document.createElement('div');
+                card.className = "bg-brand-card rounded-xl border border-brand-border overflow-hidden hover:border-gray-600 transition flex flex-col group relative";
+                
+                card.innerHTML = `
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="${ev.image}" alt="${ev.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/800x600/141418/FFF?text=Foto%C4%9Fraf'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs text-brand-red font-bold mb-2">
+                                <i class="far fa-calendar-alt"></i> ${ev.date}
+                            </div>
+                            <h4 class="text-lg font-bold text-white mb-2 line-clamp-2">${ev.title}</h4>
+                            <p class="text-xs text-gray-400 mb-4 line-clamp-3">${ev.desc}</p>
+                        </div>
+                        <div class="pt-3 border-t border-brand-border/60 flex items-center justify-between text-xs text-gray-400">
+                            <span><i class="fas fa-map-marker-alt text-brand-red mr-1"></i> ${ev.location}</span>
+                            ${appState.isAdmin ? `
+                                <div class="flex gap-2">
+                                    <button onclick="openEventModal('${ev.id}')" class="text-blue-400 hover:text-blue-300"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteEvent('${ev.id}')" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderAnnouncements() {
+            const container = document.getElementById('announcements-container');
+            container.innerHTML = '';
+
+            appState.data.announcements.forEach(ann => {
+                const item = document.createElement('div');
+                item.className = "glass-panel p-5 rounded-xl border border-brand-border flex flex-col md:flex-row justify-between md:items-center gap-4 hover:border-gray-600 transition";
+                
+                item.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-3">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-black bg-brand-red/20 border border-brand-red/40 text-brand-red uppercase">
+                                ${ann.badge || 'DUYURU'}
+                            </span>
+                            <span class="text-xs text-gray-500">${ann.date}</span>
+                        </div>
+                        <h4 class="text-base font-bold text-white">${ann.title}</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">${ann.content}</p>
+                    </div>
+                    ${appState.isAdmin ? `
+                        <button onclick="deleteAnnouncement('${ann.id}')" class="self-end md:self-center px-3 py-1.5 bg-red-900/40 text-red-400 border border-red-800 rounded text-xs hover:bg-red-800 hover:text-white transition">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                    ` : ''}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+
+            appState.data.photos.forEach(ph => {
+                const div = document.createElement('div');
+                div.className = "relative group rounded-xl overflow-hidden border border-brand-border aspect-square bg-brand-card";
+                
+                div.innerHTML = `
+                    <img src="${ph.url}" alt="${ph.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/600x600/141418/FFF?text=Resim'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 p-4 flex flex-col justify-end">
+                        <span class="text-sm font-bold text-white">${ph.title}</span>
+                    </div>
+                    ${appState.isAdmin ? `
+                        <button onclick="deletePhoto('${ph.id}')" class="absolute top-2 right-2 bg-red-600 text-white w-7 h-7 rounded-full flex items-center justify-center opacity-90 hover:opacity-100 shadow">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    ` : ''}
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function renderAbout() {
+            const ab = appState.data.about;
+            document.getElementById('about-heading-display').innerText = ab.heading;
+            document.getElementById('about-text-display').innerText = ab.text;
+            document.getElementById('about-image-display').src = ab.image;
+        }
+
+        function renderComments() {
+            const container = document.getElementById('comments-list');
+            container.innerHTML = '';
+
+            if (appState.data.comments.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-xs text-gray-500">Henüz yorum yapılmamış. İlk yorumu siz yazın!</div>`;
+                return;
+            }
+
+            appState.data.comments.forEach(cm => {
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-xl bg-brand-card border border-brand-border space-y-2 relative";
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-brand-red/20 border border-brand-red/40 flex items-center justify-center font-bold text-brand-red text-xs">
+                                ${cm.author.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-bold text-white leading-tight">${escapeHTML(cm.author)}</h5>
+                                <span class="text-[10px] text-gray-400 block">${cm.role ? escapeHTML(cm.role) + ' • ' : ''}${cm.date}</span>
+                            </div>
+                        </div>
+                        ${appState.isAdmin ? `
+                            <button onclick="deleteComment('${cm.id}')" class="text-xs text-red-400 hover:text-red-300 p-1">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                    <p class="text-xs text-gray-300 leading-relaxed pt-1">${escapeHTML(cm.text)}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateAdminUI() {
+            const adminBar = document.getElementById('admin-bar');
+            const adminBtnText = document.getElementById('admin-btn-text');
+            const addEventBtn = document.getElementById('add-event-btn');
+            const addAnnBtn = document.getElementById('add-announcement-btn');
+            const addPhotoBtn = document.getElementById('add-photo-btn');
+            const editAboutBtn = document.getElementById('edit-about-btn');
+
+            if (appState.isAdmin) {
+                adminBar.classList.remove('hidden');
+                adminBtnText.innerText = "Yönetici Modu";
+                addEventBtn.classList.remove('hidden');
+                addAnnBtn.classList.remove('hidden');
+                addPhotoBtn.classList.remove('hidden');
+                editAboutBtn.classList.remove('hidden');
+            } else {
+                adminBar.classList.add('hidden');
+                adminBtnText.innerText = "Admin Girişi";
+                addEventBtn.classList.add('hidden');
+                addAnnBtn.classList.add('hidden');
+                addPhotoBtn.classList.add('hidden');
+                editAboutBtn.classList.add('hidden');
+            }
+        }
+
+        // --- ADMIN AUTHENTICATION ---
+
+        function toggleAdminModal() {
+            if (appState.isAdmin) {
+                openAdminSettingsModal();
+            } else {
+                document.getElementById('admin-login-modal').classList.toggle('hidden');
+            }
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('admin-password-input').value;
+            const targetPass = appState.data.siteSettings.adminPass || "admin123";
+
+            if (pass === targetPass) {
+                appState.isAdmin = true;
+                document.getElementById('admin-login-modal').classList.add('hidden');
+                document.getElementById('admin-password-input').value = '';
+                showToast("Yönetici girişi başarılı!", "success");
+                renderAll();
+            } else {
+                showToast("Hatalı admin şifresi!", "error");
+            }
+        }
+
+        function logoutAdmin() {
+            appState.isAdmin = false;
+            showToast("Admin oturumu kapatıldı.", "info");
+            renderAll();
+        }
+
+        // --- MODAL CONTROLS & HANDLERS ---
+
+        // Site Settings Modal
+        function openAdminSettingsModal() {
+            const s = appState.data.siteSettings;
+            document.getElementById('setting-title').value = s.title;
+            document.getElementById('setting-subtitle').value = s.subtitle;
+            document.getElementById('setting-hero-title').value = s.heroTitle;
+            document.getElementById('setting-hero-desc').value = s.heroDesc;
+            document.getElementById('setting-instagram').value = s.instagram || '';
+            document.getElementById('setting-tiktok').value = s.tiktok || '';
+            document.getElementById('setting-logo-url').value = s.logoUrl || '';
+            document.getElementById('setting-admin-pass').value = s.adminPass || 'admin123';
+
+            document.getElementById('admin-settings-modal').classList.remove('hidden');
+        }
+
+        function closeAdminSettingsModal() {
+            document.getElementById('admin-settings-modal').classList.add('hidden');
+        }
+
+        function saveSiteSettings(e) {
+            e.preventDefault();
+            appState.data.siteSettings = {
+                title: document.getElementById('setting-title').value,
+                subtitle: document.getElementById('setting-subtitle').value,
+                heroTitle: document.getElementById('setting-hero-title').value,
+                heroDesc: document.getElementById('setting-hero-desc').value,
+                instagram: document.getElementById('setting-instagram').value,
+                tiktok: document.getElementById('setting-tiktok').value,
+                logoUrl: document.getElementById('setting-logo-url').value,
+                adminPass: document.getElementById('setting-admin-pass').value || "admin123"
+            };
+            saveState();
+            closeAdminSettingsModal();
+            renderAll();
+            showToast("Site ayarları güncellendi.");
+        }
+
+        // Event Modal
+        function openEventModal(eventId = null) {
+            const modal = document.getElementById('event-modal');
+            const title = document.getElementById('event-modal-title');
+            
+            if (eventId) {
+                const ev = appState.data.events.find(x => x.id === eventId);
+                if (!ev) return;
+                title.innerText = "Etkinlik Düzenle";
+                document.getElementById('event-id').value = ev.id;
+                document.getElementById('event-title').value = ev.title;
+                document.getElementById('event-date').value = ev.date;
+                document.getElementById('event-location').value = ev.location;
+                document.getElementById('event-image').value = ev.image;
+                document.getElementById('event-desc').value = ev.desc;
+            } else {
+                title.innerText = "Yeni Etkinlik Ekle";
+                document.getElementById('event-id').value = '';
+                document.getElementById('event-title').value = '';
+                document.getElementById('event-date').value = '';
+                document.getElementById('event-location').value = '';
+                document.getElementById('event-image').value = '';
+                document.getElementById('event-desc').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeEventModal() {
+            document.getElementById('event-modal').classList.add('hidden');
+        }
+
+        function handleSaveEvent(e) {
+            e.preventDefault();
+            const id = document.getElementById('event-id').value;
+            const newEv = {
+                id: id || 'ev-' + Date.now(),
+                title: document.getElementById('event-title').value,
+                date: document.getElementById('event-date').value,
+                location: document.getElementById('event-location').value,
+                image: document.getElementById('event-image').value,
+                desc: document.getElementById('event-desc').value
+            };
+
+            if (id) {
+                const idx = appState.data.events.findIndex(x => x.id === id);
+                if (idx !== -1) appState.data.events[idx] = newEv;
+            } else {
+                appState.data.events.unshift(newEv);
+            }
+
+            saveState();
+            closeEventModal();
+            renderEvents();
+            showToast("Etkinlik kaydedildi.");
+        }
+
+        function deleteEvent(id) {
+            if (confirm("Bu etkinliği silmek istediğinize emin misiniz?")) {
+                appState.data.events = appState.data.events.filter(x => x.id !== id);
+                saveState();
+                renderEvents();
+                showToast("Etkinlik silindi.");
+            }
+        }
+
+        // Announcement Modal
+        function openAnnouncementModal() {
+            document.getElementById('ann-title').value = '';
+            document.getElementById('ann-content').value = '';
+            document.getElementById('ann-badge').value = 'DUYURU';
+            document.getElementById('announcement-modal').classList.remove('hidden');
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcement-modal').classList.add('hidden');
+        }
+
+        function handleSaveAnnouncement(e) {
+            e.preventDefault();
+            const today = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+            const newAnn = {
+                id: 'ann-' + Date.now(),
+                title: document.getElementById('ann-title').value,
+                content: document.getElementById('ann-content').value,
+                badge: document.getElementById('ann-badge').value || 'DUYURU',
+                date: today
+            };
+            appState.data.announcements.unshift(newAnn);
+            saveState();
+            closeAnnouncementModal();
+            renderAnnouncements();
+            showToast("Duyuru yayınlandı.");
+        }
+
+        function deleteAnnouncement(id) {
+            if (confirm("Bu duyuruyu silmek istediğinize emin misiniz?")) {
+                appState.data.announcements = appState.data.announcements.filter(x => x.id !== id);
+                saveState();
+                renderAnnouncements();
+                showToast("Duyuru silindi.");
+            }
+        }
+
+        // Photo Modal
+        function openPhotoModal() {
+            document.getElementById('photo-title').value = '';
+            document.getElementById('photo-url').value = '';
+            document.getElementById('photo-modal').classList.remove('hidden');
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photo-modal').classList.add('hidden');
+        }
+
+        function handleSavePhoto(e) {
+            e.preventDefault();
+            const newPhoto = {
+                id: 'ph-' + Date.now(),
+                title: document.getElementById('photo-title').value,
+                url: document.getElementById('photo-url').value
+            };
+            appState.data.photos.unshift(newPhoto);
+            saveState();
+            closePhotoModal();
+            renderGallery();
+            showToast("Fotoğraf eklendi.");
+        }
+
+        function deletePhoto(id) {
+            if (confirm("Fotoğrafı galeriden kaldırmak istediğinize emin misiniz?")) {
+                appState.data.photos = appState.data.photos.filter(x => x.id !== id);
+                saveState();
+                renderGallery();
+                showToast("Fotoğraf silindi.");
+            }
+        }
+
+        // About Edit Modal
+        function openAboutEditModal() {
+            const ab = appState.data.about;
+            document.getElementById('about-edit-heading').value = ab.heading;
+            document.getElementById('about-edit-image').value = ab.image;
+            document.getElementById('about-edit-text').value = ab.text;
+            document.getElementById('about-edit-modal').classList.remove('hidden');
+        }
+
+        function closeAboutEditModal() {
+            document.getElementById('about-edit-modal').classList.add('hidden');
+        }
+
+        function handleSaveAbout(e) {
+            e.preventDefault();
+            appState.data.about = {
+                heading: document.getElementById('about-edit-heading').value,
+                image: document.getElementById('about-edit-image').value,
+                text: document.getElementById('about-edit-text').value
+            };
+            saveState();
+            closeAboutEditModal();
+            renderAbout();
+            showToast("Hakkımızda alanı güncellendi.");
+        }
+
+        // Comment Submission (Guestbook)
+        function handleAddComment(e) {
+            e.preventDefault();
+            const author = document.getElementById('comment-author').value;
+            const role = document.getElementById('comment-role').value;
+            const text = document.getElementById('comment-text').value;
+            const today = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const newComment = {
+                id: 'cm-' + Date.now(),
+                author: author,
+                role: role,
+                text: text,
+                date: today
+            };
+
+            appState.data.comments.unshift(newComment);
+            saveState();
+            
+            document.getElementById('comment-form').reset();
+            renderComments();
+            showToast("Yorumunuz eklendi, teşekkür ederiz!");
+        }
+
+        function deleteComment(id) {
+            if (confirm("Bu yorumu silmek istiyor musunuz?")) {
+                appState.data.comments = appState.data.comments.filter(x => x.id !== id);
+                saveState();
+                renderComments();
+                showToast("Yorum silindi.");
+            }
+        }
+
+        // --- UTILITY FUNCTIONS ---
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-brand-card border-brand-red text-white';
+            if (type === 'error') bg = 'bg-red-900 border-red-500 text-white';
+            if (type === 'success') bg = 'bg-green-950 border-green-500 text-white';
+
+            toast.className = `pointer-events-auto px-4 py-3 rounded-lg border shadow-xl text-xs font-semibold flex items-center gap-2 transition-all duration-300 transform translate-y-2 opacity-0 ${bg}`;
+            toast.innerHTML = `<i class="fas fa-info-circle text-brand-red"></i> ${message}`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            loadState();
+            renderAll();
+        };
+    </script>
+</body>
+</html>
